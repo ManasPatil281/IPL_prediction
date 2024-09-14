@@ -1,8 +1,8 @@
 import streamlit as st
-import plotly.express as px
 import pickle
 import pandas as pd
 from PIL import Image
+import matplotlib.pyplot as plt
 
 # Set page configuration first
 st.set_page_config(page_title='IPL Win Predictor', layout='centered')
@@ -104,16 +104,18 @@ if st.sidebar.button('🔮 Predict Probability'):
         st.markdown(f"### **{batting_team} Win Probability: {round(win * 100, 2)}%**")
         st.markdown(f"### **{bowling_team} Win Probability: {round(loss * 100, 2)}%**")
 
-        # Plotting the pie chart
-        fig = px.pie(values=[win, loss], names=['Win', 'Loss'], 
-                     color_discrete_sequence=px.colors.sequential.Blues,
-                     title='Win/Loss Probability', hole=0.4)
+        # Plotting the pie chart using Matplotlib
+        fig, ax = plt.subplots()
+        labels = ['Win', 'Loss']
+        sizes = [win * 100, loss * 100]
+        colors = ['#1f77b4', '#ff7f0e']
+        explode = (0.1, 0)  # explode the 1st slice
 
-        fig.update_layout(annotations=[dict(text=f'{batting_team}', x=0.5, y=0.5, 
-                                            font_size=20, showarrow=False)])
-        fig.update_traces(textinfo='percent+label')
+        ax.pie(sizes, explode=explode, labels=labels, colors=colors,
+               autopct='%1.1f%%', shadow=True, startangle=140)
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-        st.plotly_chart(fig)
+        st.pyplot(fig)
 
 # Customize the footer
 st.markdown("""
